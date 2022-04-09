@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:expense_tracker_app/Models/transaction.dart';
+import 'package:expense_tracker_app/Widgets/chart.dart';
 import 'package:flutter/material.dart';
 
 import 'Widgets/new_transaction.dart';
@@ -9,6 +10,8 @@ import 'Widgets/transaction_list.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -43,12 +46,18 @@ class _MyHomePageState extends State<MyHomePage> {
     //   date: DateTime.now(),
     // ),
   ];
-  void _addNewTransactions(String title, double amount) {
+  List<Transaction> get _recentTransactions {
+    return _usertransactions.where((tx) {
+      return tx.date.isAfter(DateTime.now().subtract(Duration(days: 7)));
+    }).toList();
+  }
+
+  void _addNewTransactions(String title, double amount, DateTime chosenDate) {
     final newTx = Transaction(
         id: DateTime.now().toString(),
         title: title,
         amount: amount,
-        date: DateTime.now());
+        date: chosenDate);
     setState(() {
       _usertransactions.add(newTx);
     });
@@ -80,16 +89,8 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
             //mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
-              Container(
-                width: double.infinity,
-                height: 30,
-                child: Card(
-                  color: Colors.blue,
-                  child: Text('Chart'),
-                  elevation: 5,
-                ),
-              ),
-              userTransactionList(_usertransactions)
+              Chart(_recentTransactions),
+              userTransactionList(_usertransactions),
             ]),
       ),
       floatingActionButton: FloatingActionButton(

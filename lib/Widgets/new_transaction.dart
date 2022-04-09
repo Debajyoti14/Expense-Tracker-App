@@ -1,4 +1,7 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class newTransaction extends StatefulWidget {
   final Function AddTx;
@@ -13,16 +16,41 @@ class _newTransactionState extends State<newTransaction> {
 
   final amountController = TextEditingController();
 
+  DateTime? selectedDate;
+
   void submitData() {
+    if (amountController.text.isEmpty) {
+      return;
+    }
     final enteredTitles = titleController.text;
     final enteredAmount = double.parse(amountController.text);
 
-    if (enteredTitles.isEmpty || enteredAmount <= 0) {
+    if (enteredTitles.isEmpty || enteredAmount <= 0 || selectedDate == null) {
       return;
     }
-    widget.AddTx(enteredTitles, enteredAmount);
+    widget.AddTx(
+      enteredTitles,
+      enteredAmount,
+      selectedDate,
+    );
 
     Navigator.of(context).pop();
+  }
+
+  void _presentDatePicker() {
+    showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2003),
+      lastDate: DateTime.now(),
+    ).then((pickedDate) {
+      if (pickedDate == null) {
+        return;
+      }
+      setState(() {
+        selectedDate = pickedDate;
+      });
+    });
   }
 
   @override
@@ -44,9 +72,28 @@ class _newTransactionState extends State<newTransaction> {
                 keyboardType: TextInputType.number,
                 onSubmitted: (_) => submitData(),
               ),
-              FlatButton(
+              Container(
+                  height: 70,
+                  child: Row(children: <Widget>[
+                    Expanded(
+                      child: Text(selectedDate == null
+                          ? 'No date Chosen'
+                          : DateFormat.yMd().format(selectedDate!)),
+                    ),
+                    Container(
+                      child: FlatButton(
+                          textColor: Theme.of(context).primaryColor,
+                          child: Text(
+                            'Choose Date',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          onPressed: _presentDatePicker),
+                    ),
+                  ])),
+              RaisedButton(
                   onPressed: () => submitData,
-                  textColor: Colors.purple,
+                  color: Colors.purple,
+                  textColor: Colors.white,
                   child: Text('Add Transcript'))
             ],
           ),
