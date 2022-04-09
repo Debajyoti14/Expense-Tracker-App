@@ -74,11 +74,17 @@ class _MyHomePageState extends State<MyHomePage> {
         });
   }
 
+  void deleteTransaction(String id) {
+    setState(() {
+      _usertransactions.removeWhere((tx) => tx.id == id);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Flutter App'),
+        title: Text('Personal Expense'),
         actions: <Widget>[
           IconButton(
               icon: Icon(Icons.add),
@@ -90,7 +96,7 @@ class _MyHomePageState extends State<MyHomePage> {
             //mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
               Chart(_recentTransactions),
-              userTransactionList(_usertransactions),
+              userTransactionList(_usertransactions, deleteTransaction),
             ]),
       ),
       floatingActionButton: FloatingActionButton(
