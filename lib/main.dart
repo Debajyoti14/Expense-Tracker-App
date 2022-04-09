@@ -3,11 +3,18 @@
 import 'package:expense_tracker_app/Models/transaction.dart';
 import 'package:expense_tracker_app/Widgets/chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'Widgets/new_transaction.dart';
 import 'Widgets/transaction_list.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -68,7 +75,6 @@ class _MyHomePageState extends State<MyHomePage> {
         context: ctx,
         builder: (_) {
           return GestureDetector(
-            onTap: () {},
             child: newTransaction(_addNewTransactions),
           );
         });
@@ -82,21 +88,32 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final appBar = AppBar(
+      title: Text('Personal Expense'),
+      actions: <Widget>[
+        IconButton(
+            icon: Icon(Icons.add),
+            onPressed: () => startAddNewTransactions(context))
+      ],
+    );
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Personal Expense'),
-        actions: <Widget>[
-          IconButton(
-              icon: Icon(Icons.add),
-              onPressed: () => startAddNewTransactions(context))
-        ],
-      ),
+      appBar: appBar,
       body: SingleChildScrollView(
         child: Column(
             //mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
-              Chart(_recentTransactions),
-              userTransactionList(_usertransactions, deleteTransaction),
+              Container(
+                  height: (MediaQuery.of(context).size.height -
+                          appBar.preferredSize.height -
+                          MediaQuery.of(context).padding.top) *
+                      0.3,
+                  child: Chart(_recentTransactions)),
+              Container(
+                  height: (MediaQuery.of(context).size.height -
+                          appBar.preferredSize.height) *
+                      0.7,
+                  child: userTransactionList(
+                      _usertransactions, deleteTransaction)),
             ]),
       ),
       floatingActionButton: FloatingActionButton(
