@@ -91,7 +91,7 @@ class _newTransactionState extends State<newTransaction> {
                     ),
                   ])),
               RaisedButton(
-                  onPressed: () => submitData,
+                  onPressed: () => submitData(),
                   color: Colors.purple,
                   textColor: Colors.white,
                   child: Text('Add Transcript'))
