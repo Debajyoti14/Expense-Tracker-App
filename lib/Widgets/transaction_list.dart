@@ -1,19 +1,43 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../Models/transaction.dart';
 
-class userTransactionList extends StatelessWidget {
+class userTransactionList extends StatefulWidget {
   final List<Transaction> transactions;
 
   final Function deleteTransaction;
-  userTransactionList(this.transactions, this.deleteTransaction);
+  userTransactionList(
+    this.transactions,
+    this.deleteTransaction,
+  );
+
+  @override
+  State<userTransactionList> createState() => _userTransactionListState();
+}
+
+class _userTransactionListState extends State<userTransactionList> {
+  Color? _bgColor;
+
+  @override
+  void initState() {
+    const availableColors = [
+      Colors.black,
+      Colors.purple,
+      Colors.blue,
+      Colors.deepOrange
+    ];
+    _bgColor = availableColors[Random().nextInt(4)];
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
         height: 300,
-        child: transactions.isEmpty
+        child: widget.transactions.isEmpty
             ? Column(
                 children: <Widget>[
                   Text('No transactions added yet',
@@ -35,32 +59,35 @@ class userTransactionList extends StatelessWidget {
                     margin: EdgeInsets.symmetric(vertical: 8, horizontal: 5),
                     child: ListTile(
                       leading: CircleAvatar(
+                        backgroundColor: _bgColor,
                         radius: 30,
                         child: Padding(
                           padding: EdgeInsets.all(6),
                           child: FittedBox(
-                            child: Text('\₹${transactions[index].amount}'),
+                            child:
+                                Text('\₹${widget.transactions[index].amount}'),
                           ),
                         ),
                       ),
                       title: Text(
-                        transactions[index].title,
+                        widget.transactions[index].title,
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 20),
                       ),
                       subtitle: Text(
-                        DateFormat.yMMMd().format(transactions[index].date),
+                        DateFormat.yMMMd()
+                            .format(widget.transactions[index].date),
                       ),
                       trailing: IconButton(
                         icon: Icon(Icons.delete),
                         color: Colors.red,
-                        onPressed: () =>
-                            deleteTransaction(transactions[index].id),
+                        onPressed: () => widget
+                            .deleteTransaction(widget.transactions[index].id),
                       ),
                     ),
                   );
                 },
-                itemCount: transactions.length,
+                itemCount: widget.transactions.length,
               ));
   }
 }
