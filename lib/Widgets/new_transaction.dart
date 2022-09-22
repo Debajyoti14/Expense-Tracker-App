@@ -3,14 +3,17 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+// ignore: camel_case_types
 class newTransaction extends StatefulWidget {
+  // ignore: non_constant_identifier_names
   final Function AddTx;
-  newTransaction(this.AddTx);
+  const newTransaction(this.AddTx, {Key? key}) : super(key: key);
 
   @override
   State<newTransaction> createState() => _newTransactionState();
 }
 
+// ignore: camel_case_types
 class _newTransactionState extends State<newTransaction> {
   final titleController = TextEditingController();
 
@@ -78,7 +81,7 @@ class _newTransactionState extends State<newTransaction> {
                   keyboardType: TextInputType.number,
                   onSubmitted: (_) => submitData(),
                 ),
-                Container(
+                SizedBox(
                     height: 70,
                     child: Row(children: <Widget>[
                       Expanded(
@@ -86,20 +89,23 @@ class _newTransactionState extends State<newTransaction> {
                             ? 'No date Chosen'
                             : DateFormat.yMd().format(selectedDate!)),
                       ),
-                      Container(
-                        child: FlatButton(
-                            textColor: Theme.of(context).primaryColor,
-                            child: Text(
-                              'Choose Date',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            onPressed: _presentDatePicker),
-                      ),
+                      TextButton(
+                          style: TextButton.styleFrom(
+                            foregroundColor: Theme.of(context).primaryColor,
+                          ),
+                          child: Text(
+                            'Choose Date',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          onPressed: _presentDatePicker),
                     ])),
-                RaisedButton(
+                ElevatedButton(
                     onPressed: () => submitData(),
-                    color: Colors.purple,
-                    textColor: Colors.white,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor:
+                          Colors.purple, // background (button) color
+                      foregroundColor: Colors.white, // foreground (text) color
+                    ),
                     child: Text('Add Transcript'))
               ],
             ),

@@ -17,16 +17,16 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp();
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Expense Tracker',
       theme: ThemeData(
-        primarySwatch: Colors.purple,
-        accentColor: Colors.amber,
         fontFamily: 'QuickSand',
+        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.purple)
+            .copyWith(secondary: Colors.amber),
       ),
       home: MyHomePage(),
     );
@@ -34,6 +34,8 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
+  const MyHomePage({Key? key}) : super(key: key);
+
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
@@ -54,20 +56,20 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     // ),
   ];
 
-  @override
   void initstate() {
-    WidgetsBinding.instance?.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
     super.initState();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
+    // ignore: avoid_print
     print(state);
   }
 
   @override
   dispose() {
-    WidgetsBinding.instance?.removeObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
@@ -120,13 +122,13 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
         child: Column(
             //mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
-              Container(
+              SizedBox(
                   height: (MediaQuery.of(context).size.height -
                           appBar.preferredSize.height -
                           MediaQuery.of(context).padding.top) *
                       0.3,
                   child: Chart(_recentTransactions)),
-              Container(
+              SizedBox(
                   height: (MediaQuery.of(context).size.height -
                           appBar.preferredSize.height) *
                       0.7,
