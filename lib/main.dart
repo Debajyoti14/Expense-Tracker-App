@@ -4,11 +4,17 @@ import 'package:expense_tracker_app/Models/transaction.dart';
 import 'package:expense_tracker_app/Widgets/chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import 'Widgets/new_transaction.dart';
 import 'Widgets/transaction_list.dart';
 
+import 'package:flutter_sms_inbox/flutter_sms_inbox.dart';
+
 void main() {
+  // add this, and it should be the first line in main method
+  WidgetsFlutterBinding.ensureInitialized();
+
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
@@ -16,12 +22,18 @@ void main() {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Expense Tracker',
       theme: ThemeData(
         fontFamily: 'QuickSand',
@@ -41,6 +53,26 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
+  final SmsQuery _query = SmsQuery();
+  List<SmsMessage> _messages = [];
+
+  void retrieveSMS() async {
+    var permission = await Permission.sms.status;
+    if (permission.isGranted) {
+      final messages = await _query.querySms(
+        kinds: [SmsQueryKind.inbox, SmsQueryKind.sent],
+        // address: '+254712345789',
+        count: 10,
+      );
+      debugPrint('sms inbox messages: ${messages.length}');
+
+      setState(() => _messages = messages);
+      print(_messages);
+    } else {
+      await Permission.sms.request();
+    }
+  }
+
   final List<Transaction> _usertransactions = [
     // Transaction(
     //   id: 't1',
@@ -113,7 +145,8 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
       actions: <Widget>[
         IconButton(
             icon: Icon(Icons.add),
-            onPressed: () => startAddNewTransactions(context))
+            onPressed: () => startAddNewTransactions(context)),
+        IconButton(icon: Icon(Icons.sms), onPressed: () => retrieveSMS())
       ],
     );
     return Scaffold(
